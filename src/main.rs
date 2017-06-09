@@ -156,7 +156,7 @@ fn end_tanlog(fname: &str) {
     tmux_log_off!();
     if !Path::new(fname).exists() { process::exit(0) }
     let metadata = fs::metadata(fname).unwrap();
-    if metadata.len() >= 100_100_100 { process::exit(0) }
+    if metadata.len() >= 100_000_000 { process::exit(0) }
     sanitize_log(fname);
 }
 

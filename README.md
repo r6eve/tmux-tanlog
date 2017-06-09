@@ -6,7 +6,7 @@ tmux-tanlog
 ## Installation
 
 ```console
-$ git cloen https://github.com/r6eve/tmux-tanlog.git
+$ git clone https://github.com/r6eve/tmux-tanlog.git
 $ cd tmux-tanlog
 $ cargo install
 ```
