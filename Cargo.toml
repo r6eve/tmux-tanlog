@@ -1,0 +1,9 @@
+[package]
+name = "tmux-tanlog"
+version = "0.0.9"
+authors = ["r6eve <r6eve179f@gmail.com>"]
+
+[dependencies]
+lazy_static = "0.2.8"
+regex = "0.2.2"
+time = "0.1.37"
