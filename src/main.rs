@@ -90,10 +90,10 @@ fn setup_cmd_link(logfile: &str, cmd: &str) {
         format!("{}/RAW/{}", TANLOG_DIR, arg0),
         format!("{}/{}", Path::new(logfile).parent().unwrap().to_str().unwrap(), arg0)
     ] {
-        for t in &[(cmddir, logfile), (&raw_to_san(cmddir), &raw_to_san(logfile))] {
-            fs::create_dir_all(t.0).unwrap();
-            ln_sf(t.1, &format!("{}/{}", t.0, Path::new(t.1).file_name().unwrap().to_str().unwrap()));
-            create_prev_links(t.1, t.0);
+        for &(cd, lf) in &[(cmddir, logfile), (&raw_to_san(cmddir), &raw_to_san(logfile))] {
+            fs::create_dir_all(cd).unwrap();
+            ln_sf(lf, &format!("{}/{}", cd, Path::new(lf).file_name().unwrap().to_str().unwrap()));
+            create_prev_links(lf, cd);
         }
     }
 }
@@ -102,12 +102,12 @@ fn start_tanlog(cmd: &str) {
     let now = time::now();
     let logdir = format!("{}/RAW/{}", TANLOG_DIR, now.strftime("%Y-%m-%d").unwrap());
 
-    for t in &[("RAW/", &logdir), ("", &raw_to_san(&logdir))] {
-        fs::create_dir_all(t.1).unwrap();
-        let dot_today = format!("{}/{}.TODAY", TANLOG_DIR, t.0);
+    for &(path, ld) in &[("RAW/", &logdir), ("", &raw_to_san(&logdir))] {
+        fs::create_dir_all(ld).unwrap();
+        let dot_today = format!("{}/{}.TODAY", TANLOG_DIR, path);
         rm_f(&dot_today);
-        ln_sf(t.1, &dot_today);
-        fs::rename(&dot_today, &format!("{}/{}TODAY", TANLOG_DIR, t.0)).unwrap();
+        ln_sf(ld, &dot_today);
+        fs::rename(&dot_today, &format!("{}/{}TODAY", TANLOG_DIR, path)).unwrap();
     }
 
     let logfile;
