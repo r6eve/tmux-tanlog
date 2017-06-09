@@ -19,6 +19,7 @@ lazy_static! {
         | \x1B \x5B .*? [\x40-\x7E] # CSI
         | \x1B \x5D .*? \x07 # Set terminal title
         | \x1B [\x40-\x5A\x5C\x5F] # 2 byte sequence
+        | \x1B \x28 \x42 # ESC ( B
     ").unwrap();
 
     // Remove end-of-line CRs.
