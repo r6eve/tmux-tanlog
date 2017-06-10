@@ -144,7 +144,8 @@ fn sanitize_log(rawfile: &str) {
     let mut br = BufReader::new(ifile);
     let mut of = File::create(&sanfile).unwrap();
     let mut line = String::new();
-    while br.read_line(&mut line).unwrap() > 0 {
+    while let Ok(n) = br.read_line(&mut line) {
+        if n == 0 { break }
         let l = REMOVE.replace_all(line.as_bytes(), &b""[..]).into_owned();
         let l = END_OF_LINE_CR.replace_all(&l, &b"\x0A"[..]).into_owned();
         let l = ORPHAN_CR.replace_all(&l, &b"\x0A"[..]).into_owned();
