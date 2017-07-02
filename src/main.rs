@@ -103,8 +103,7 @@ fn create_prev_links(logfile: &str, dir: &str) -> Result<()> {
 }
 
 fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()>{
-    let re = Regex::new(r"^[()\s]*(\S+).*$")?;
-    // TODO: FIX > echo 'hello[Enter]world' or > echo hello\[Enter]world
+    let re = Regex::new(r"^[()\s]*(\S+)")?;
     let cap = re.captures(cmd).ok_or(ErrorKind::NoMatch)?;
     let arg0 = cap[1].parse::<String>()?;
     let arg0 = Path::new(&arg0).file_name().ok_or(ErrorKind::NotFileName)?;
