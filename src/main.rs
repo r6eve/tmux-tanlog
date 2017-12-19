@@ -14,7 +14,7 @@ use std::os::unix;
 use std::path::Path;
 use std::process::{self, Command};
 
-const TANLOG_DIR: &'static str = "/tmp/tanlog";
+const TANLOG_DIR: &str = "/tmp/tanlog";
 
 error_chain!{
     foreign_links {
@@ -51,15 +51,15 @@ lazy_static! {
 
 macro_rules! errorln {
     () => ({
-        writeln!(io::stderr(), "error").unwrap();
+        eprintln!("error");
         process::exit(1);
     });
     ($fmt:expr) => ({
-        writeln!(io::stderr(), $fmt).unwrap();
+        eprintln!($fmt);
         process::exit(1);
     });
     ($fmt:expr, $($arg:tt)*) => ({
-        writeln!(io::stderr(), $fmt, $($arg)*).unwrap();
+        eprintln!($fmt, $($arg)*);
         process::exit(1);
     });
 }
