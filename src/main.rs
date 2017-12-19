@@ -7,7 +7,7 @@ extern crate lazy_static;
 extern crate regex;
 extern crate time;
 
-use regex::{Regex, bytes};
+use regex::{bytes, Regex};
 use std::env;
 use std::fs::{self, File};
 use std::io::{self, BufReader, Write};
@@ -104,7 +104,7 @@ fn create_prev_links(logfile: &str, dir: &str) -> Result<()> {
     Ok(())
 }
 
-fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()>{
+fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
     let re = Regex::new(r"^[()\s]*(\S+)")?;
     let cap = re.captures(cmd).ok_or(ErrorKind::NoMatch)?;
     let arg0 = cap[1].parse::<String>()?;
@@ -114,9 +114,15 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()>{
     let pp = Path::new(logfile).parent().ok_or(ErrorKind::InvalidParent)?;
     let pp = pp.to_str().ok_or(ErrorKind::InvalidUnicode)?;
 
-    let cmddirs = [format!("{}/RAW/{}", TANLOG_DIR, arg0), format!("{}/{}", pp, arg0)];
+    let cmddirs = [
+        format!("{}/RAW/{}", TANLOG_DIR, arg0),
+        format!("{}/{}", pp, arg0),
+    ];
     for cmddir in &cmddirs {
-        for &(cd, lf) in &[(cmddir, logfile), (&raw_to_san(cmddir), &raw_to_san(logfile))] {
+        for &(cd, lf) in &[
+            (cmddir, logfile),
+            (&raw_to_san(cmddir), &raw_to_san(logfile)),
+        ] {
             fs::create_dir_all(cd)?;
             let p = Path::new(lf).file_name().ok_or(ErrorKind::NotFileName)?;
             let p = p.to_str().ok_or(ErrorKind::InvalidUnicode)?;
@@ -163,7 +169,9 @@ fn start_tanlog(cmd: &str) -> Result<()> {
 
 fn sanitize_log(rawfile: &str) -> Result<()> {
     let sanfile = raw_to_san(rawfile);
-    if Path::new(&sanfile).exists() { process::exit(0) }
+    if Path::new(&sanfile).exists() {
+        process::exit(0)
+    }
     lazy_static::initialize(&REMOVE);
     lazy_static::initialize(&END_OF_LINE_CR);
     lazy_static::initialize(&ORPHAN_CR);
@@ -172,7 +180,9 @@ fn sanitize_log(rawfile: &str) -> Result<()> {
     let mut of = File::create(&sanfile)?;
     let mut line = String::new();
     while let Ok(n) = br.read_line(&mut line) {
-        if n == 0 { break }
+        if n == 0 {
+            break;
+        }
         let l = REMOVE.replace_all(line.as_bytes(), &b""[..]).into_owned();
         let l = END_OF_LINE_CR.replace_all(&l, &b"\x0A"[..]).into_owned();
         let l = ORPHAN_CR.replace_all(&l, &b"\x0A"[..]).into_owned();
@@ -184,9 +194,13 @@ fn sanitize_log(rawfile: &str) -> Result<()> {
 
 fn end_tanlog(fname: &str) -> Result<()> {
     tmux_log_off!();
-    if !Path::new(fname).exists() { process::exit(0) }
+    if !Path::new(fname).exists() {
+        process::exit(0)
+    }
     let metadata = fs::metadata(fname)?;
-    if metadata.len() >= 100_000_000 { process::exit(0) }
+    if metadata.len() >= 100_000_000 {
+        process::exit(0)
+    }
     sanitize_log(fname)
 }
 
@@ -209,15 +223,23 @@ fn show_recent_logs() -> Result<()> {
 
 fn main() {
     let args = env::args().skip(1).collect::<Vec<_>>();
-    if args.is_empty() { errorln!("No args.") }
-    if env::var_os("TMUX").is_none() { process::exit(0) }
+    if args.is_empty() {
+        errorln!("No args.")
+    }
+    if env::var_os("TMUX").is_none() {
+        process::exit(0)
+    }
     let ret = match args[0].as_ref() {
         "start" => {
-            if args.len() < 2 { process::exit(0) }
+            if args.len() < 2 {
+                process::exit(0)
+            }
             start_tanlog(&args[1])
         }
         "end" => {
-            if args.len() < 2 { process::exit(0) }
+            if args.len() < 2 {
+                process::exit(0)
+            }
             end_tanlog(&args[1])
         }
         "recent" => show_recent_logs(),
