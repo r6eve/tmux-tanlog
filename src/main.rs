@@ -10,8 +10,8 @@ extern crate time;
 use regex::{bytes, Regex};
 use std::env;
 use std::fs::{self, File};
-use std::io::{self, BufReader, Write};
 use std::io::prelude::*;
+use std::io::{self, BufReader, Write};
 use std::os::unix;
 use std::path::Path;
 use std::process::{self, Command};
@@ -67,17 +67,23 @@ macro_rules! errorln {
 }
 
 macro_rules! tmux_log_on {
-    ($file:ident) => ({
-        Command::new("tmux").arg("pipe-pane").arg(&format!("cat >>{}", $file)).spawn()
+    ($file:ident) => {{
+        Command::new("tmux")
+            .arg("pipe-pane")
+            .arg(&format!("cat >>{}", $file))
+            .spawn()
             .unwrap_or_else(|e| errorln!("Command failed: {}", e));
-    });
+    }};
 }
 
 macro_rules! tmux_log_off {
-    () => ({
-        Command::new("tmux").arg("pipe-pane").arg(";").spawn()
+    () => {{
+        Command::new("tmux")
+            .arg("pipe-pane")
+            .arg(";")
+            .spawn()
             .unwrap_or_else(|e| errorln!("Command failed: {}", e));
-    });
+    }};
 }
 
 fn raw_to_san(raw: &str) -> String {
