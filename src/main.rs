@@ -170,7 +170,9 @@ fn start_tanlog(cmd: &str) -> Result<()> {
 
     create_prev_links(&raw_to_san(&logfile), &format!("{}/TODAY", TANLOG_DIR))?;
 
-    setup_cmd_link(&logfile, cmd)
+    setup_cmd_link(&logfile, cmd)?;
+
+    Ok(())
 }
 
 fn sanitize_log(rawfile: &str) -> Result<()> {
@@ -207,7 +209,8 @@ fn end_tanlog(fname: &str) -> Result<()> {
     if metadata.len() >= 100_000_000 {
         process::exit(0)
     }
-    sanitize_log(fname)
+    sanitize_log(fname)?;
+    Ok(())
 }
 
 fn show_recent_logs() -> Result<()> {
