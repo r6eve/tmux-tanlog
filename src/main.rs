@@ -230,7 +230,7 @@ fn show_recent_logs() -> Result<()> {
     Ok(())
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = env::args().skip(1).collect::<Vec<_>>();
     if args.is_empty() {
         errorln!("No args.")
@@ -238,7 +238,7 @@ fn main() {
     if env::var_os("TMUX").is_none() {
         process::exit(0)
     }
-    let ret = match args[0].as_ref() {
+    match args[0].as_ref() {
         "start" => {
             if args.len() < 2 {
                 process::exit(0)
@@ -253,6 +253,5 @@ fn main() {
         }
         "recent" => show_recent_logs(),
         _ => Err(Error::from(ErrorKind::NoCommand)),
-    };
-    ret.unwrap_or_else(|e| errorln!("error: {}", e));
+    }
 }
