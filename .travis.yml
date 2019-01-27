@@ -3,7 +3,7 @@ git:
 
 language: rust
 
-dist: trusty
+dist: xenial
 
 rust:
   - stable
