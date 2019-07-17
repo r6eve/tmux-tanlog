@@ -25,7 +25,7 @@ use std::process::{self, Command};
 
 const TANLOG_DIR: &str = "/tmp/tanlog";
 
-error_chain!{
+error_chain! {
     foreign_links {
         IO(::std::io::Error);
         Regex(::regex::Error);
@@ -124,7 +124,9 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
     let arg0 = Path::new(&arg0).file_name().ok_or(ErrorKind::NotFileName)?;
     let arg0 = arg0.to_str().ok_or(ErrorKind::InvalidUnicode)?;
 
-    let pp = Path::new(logfile).parent().ok_or(ErrorKind::InvalidParent)?;
+    let pp = Path::new(logfile)
+        .parent()
+        .ok_or(ErrorKind::InvalidParent)?;
     let pp = pp.to_str().ok_or(ErrorKind::InvalidUnicode)?;
 
     let cmddirs = [
