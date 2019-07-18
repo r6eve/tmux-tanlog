@@ -6,6 +6,7 @@
 //
 
 #![allow(unused_doc_comments)]
+#![allow(deprecated)] // HACK: Use [failure](https://github.com/rust-lang-nursery/failure)
 
 #[macro_use]
 extern crate error_chain;
