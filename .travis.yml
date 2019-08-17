@@ -7,7 +7,6 @@ dist: bionic
 
 rust:
   - stable
-  - beta
   - nightly
 
 script:
@@ -17,7 +16,6 @@ script:
 
 matrix:
   allow_failures:
-    - rust: beta
     - rust: nightly
 
 notifications:
