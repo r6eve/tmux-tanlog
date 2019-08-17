@@ -5,6 +5,10 @@ language: rust
 
 dist: bionic
 
+env:
+  global:
+    - PROJECT_NAME=tmux-tanlog
+
 matrix:
   include:
     - os: linux
@@ -42,6 +46,20 @@ script:
   - rustc --version --verbose
   - cargo --version --verbose
   - cargo build --target $TARGET --verbose
+
+before_deploy: ci/before_deploy.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "kUkZEGN/NFp1rsHSZ52C91WPLhsQ78D5okDPLRC9WQd+igPuugx8yi4US+Cvk1gtQkbOYecUYKzzQUrhuGrhSNCmaJZ27B5gQUZKBo2KOcklRnaKAqK/xcDXGyzQwWd97812lzOBFmav6m4YRLBDnoasUUzqyrN2ZE38Yo2svxotRAbCxdJwBX4TSqywVdDoMoJ6Vsk7wAtOZCchxiFiCmF1bJdrfDg1pLgqSWTnRLpopGrV1wGZWwUxszk/cy1OzN+wep3i92fBqUZa49qaIIZBTKgYaizXDbaZcVX4VNwjBa0Xyx7kvmH1BN5QRRnA6gOovHwEvcy7o3X/QkQUWY3djSNRblMXWW0162NDyzrEvXJ25ESuGC3zZIIpVuOz+VplVSVWF+mqRwV6dnzC8boU2mmBUTa15cBvfxyLwq16iGEqnjkMaFaW2XbpaeIbTp2ZNzeYtLmf8vvPNylIRry17JlzMueohznVWSwE4wtyIlEcrB7ZArHRIt10FrHw7cJ7SE5eRJTtE7P4kWoZWgZopB6F8Nt9ttfi0Z/4kK1K4dxT+Gf6CCkOidGMoPpxlV89YSGNP8UohH5ysXjmtiaK4vZyZ8TNbrGa37HjgUTj4AUhQH6Bms5u6Z/6JRO3vovHetf4B9fucoRm+ZcmUIWd5rjwQZNzATOzdSQ+XGQ="
+  file_glob: true
+  file:
+    - $PROJECT_NAME-$TRAVIS_TAG-$TARGET.tar.xz
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: $TRAVIS_RUST_VERSION = stable && $TARGET != ""
 
 notifications:
   email:
