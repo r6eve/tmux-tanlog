@@ -3,22 +3,45 @@ git:
 
 language: rust
 
-dist: xenial
-
-rust:
-  - stable
-  - beta
-  - nightly
-
-script:
-  - rustc --version -v
-  - cargo --version -v
-  - cargo build
+dist: bionic
 
 matrix:
-  allow_failures:
-    - rust: beta
-    - rust: nightly
+  include:
+    - os: linux
+      rust: stable
+      env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: stable
+      env:
+        - TARGET=x86_64-unknown-linux-musl
+        - CC_x86_64_unknown_linux_musl=/usr/bin/musl-gcc
+      addons:
+        apt:
+          update: true
+          packages:
+            - musl-tools
+    - os: linux
+      rust: nightly
+      env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: nightly
+      env:
+        - TARGET=x86_64-unknown-linux-musl
+        - CC_x86_64_unknown_linux_musl=/usr/bin/musl-gcc
+      addons:
+        apt:
+          update: true
+          packages:
+            - musl-tools
+
+install:
+  # Prevent target re-add error from rustup
+  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$TARGET" != "x86_64-unknown-linux-gnu" ]]; then rustup target add $TARGET; fi
+
+script:
+  - rustc --version --verbose
+  - cargo --version --verbose
+  - cargo build --target $TARGET --verbose
 
 notifications:
   email:
