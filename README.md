@@ -2,7 +2,7 @@ tmux-tanlog
 ===========
 [![Build Status][]][CI Results]
 
-`tmux-tanlog` is a tmux/zsh version of [tanlog - 兼雑記](http://shinh.hatenablog.com/entry/2017/02/12/031105).
+`tmux-tanlog` is a tmux/zsh version of [tanlog](http://shinh.hatenablog.com/entry/2017/02/12/031105).
 
 ## Installation
 
