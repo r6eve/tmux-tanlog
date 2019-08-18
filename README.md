@@ -6,11 +6,19 @@ tmux-tanlog
 
 ## Installation
 
+### From source codes
+
 ```console
 $ git clone https://github.com/r6eve/tmux-tanlog.git
 $ cd tmux-tanlog
 $ cargo install
 ```
+
+### From executable binaries
+
+See [Releases][]. There are two binaries; `*-gnu.tar.xz` is dynamically linked and `*-musl.tar.xz` is statically linked.
+
+## Settings
 
 And add the following to your .zshrc
 
@@ -25,3 +33,4 @@ precmd_functions+=tanlog_end
 
 [Build Status]: https://travis-ci.org/r6eve/tmux-tanlog.svg?branch=master
 [CI Results]: https://travis-ci.org/r6eve/tmux-tanlog
+[Releases]: https://github.com/r6eve/tmux-tanlog/releases
