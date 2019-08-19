@@ -11,7 +11,7 @@ tmux-tanlog
 ```console
 $ git clone https://github.com/r6eve/tmux-tanlog.git
 $ cd tmux-tanlog
-$ cargo install
+$ cargo install --path .
 ```
 
 ### From executable binaries
