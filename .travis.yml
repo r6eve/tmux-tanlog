@@ -9,6 +9,10 @@ env:
   global:
     - PROJECT_NAME=tmux-tanlog
 
+cache:
+  directories:
+    - $HOME/.cargo
+
 matrix:
   include:
     - os: linux
@@ -60,6 +64,9 @@ deploy:
   on:
     tags: true
     condition: $TRAVIS_RUST_VERSION = stable && $TARGET != ""
+
+before_cache:
+  - rm -rf $HOME/.cargo/registry
 
 notifications:
   email:
