@@ -2,7 +2,9 @@ tmux-tanlog
 ===========
 [![Build Status][]][CI Results]
 
-`tmux-tanlog` is a tmux/zsh version of [tanlog][].
+`tmux-tanlog` is a tmux/zsh version of [tanlog][] (It's original GNU Screen version).
+
+This tool saves console outputs into text files in `/tmp/tanlog/`. It depends on `tmux` and `zsh`.
 
 ## Installation
 
