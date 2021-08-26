@@ -1,7 +1,7 @@
 [package]
 name = "tmux-tanlog"
 version = "0.1.1"
-authors = ["r6eve <r6eve179f@gmail.com>"]
+authors = ["r6eve <r6eve@acm.org>"]
 
 [dependencies]
 error-chain = "0.12.1"
