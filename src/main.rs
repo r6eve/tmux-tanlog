@@ -262,6 +262,10 @@ fn main() -> Result<()> {
             end_tanlog(&args[1])
         }
         "recent" => show_recent_logs(),
+        "version" | "--version" => {
+            println!("{}", env!("CARGO_PKG_VERSION"));
+            process::exit(0)
+        }
         _ => Err(Error::from(ErrorKind::NoCommand)),
     }
 }
