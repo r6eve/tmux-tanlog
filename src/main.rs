@@ -8,13 +8,14 @@
 #![allow(unused_doc_comments)]
 #![allow(deprecated)] // HACK: Use [failure](https://github.com/rust-lang-nursery/failure)
 
+extern crate chrono;
 #[macro_use]
 extern crate error_chain;
 #[macro_use]
 extern crate lazy_static;
 extern crate regex;
-extern crate time;
 
+use chrono::Local;
 use regex::{bytes, Regex};
 use std::env;
 use std::fs::{self, File};
@@ -31,7 +32,6 @@ error_chain! {
         IO(::std::io::Error);
         Regex(::regex::Error);
         String(::std::string::ParseError);
-        Time(::time::ParseError);
     }
 
     errors {
@@ -150,8 +150,8 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
 }
 
 fn start_tanlog(cmd: &str) -> Result<()> {
-    let now = time::now();
-    let logdir = format!("{}/RAW/{}", TANLOG_DIR, now.strftime("%Y-%m-%d")?);
+    let now = Local::now();
+    let logdir = format!("{}/RAW/{}", TANLOG_DIR, now.format("%Y-%m-%d"));
 
     for &(path, ld) in &[("RAW/", &logdir), ("", &raw_to_san(&logdir))] {
         fs::create_dir_all(ld)?;
@@ -162,7 +162,7 @@ fn start_tanlog(cmd: &str) -> Result<()> {
     }
 
     let mut logfile = String::new();
-    let time = now.strftime("%H:%M:%S")?;
+    let time = now.format("%H:%M:%S");
     for n in 0.. {
         let lf = format!("{}/{}-{}.log", logdir, time, n);
         if !Path::new(&lf).exists() {
