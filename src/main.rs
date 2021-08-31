@@ -6,11 +6,8 @@
 //
 
 #![allow(unused_doc_comments)]
-#![allow(deprecated)] // HACK: Use [failure](https://github.com/rust-lang-nursery/failure)
 
 extern crate chrono;
-#[macro_use]
-extern crate error_chain;
 #[macro_use]
 extern crate lazy_static;
 extern crate regex;
@@ -26,23 +23,6 @@ use std::path::Path;
 use std::process::{self, Command};
 
 const TANLOG_DIR: &str = "/tmp/tanlog";
-
-error_chain! {
-    foreign_links {
-        IO(::std::io::Error);
-        Regex(::regex::Error);
-        String(::std::string::ParseError);
-    }
-
-    errors {
-        InvalidParent {}
-        InvalidUnicode {}
-        NoChars {}
-        NoCommand {}
-        NoMatch {}
-        NotFileName {}
-    }
-}
 
 lazy_static! {
     static ref REMOVE: bytes::Regex = bytes::Regex::new(r"(?x)
@@ -106,10 +86,10 @@ fn rm_f<P: AsRef<Path>>(path: P) {
     fs::remove_file(path).unwrap_or(());
 }
 
-fn create_prev_links(logfile: &str, dir: &str) -> Result<()> {
+fn create_prev_links(logfile: &str, dir: &str) -> io::Result<()> {
     let mut prev_link = format!("{}/PPPPPPPPPP", dir); // "P" * 10
     for _ in 0..9 {
-        prev_link.pop().ok_or(ErrorKind::NoChars)?;
+        prev_link.pop();
         if Path::new(&prev_link).exists() {
             fs::rename(&prev_link, &format!("{}P", prev_link))?;
         }
@@ -118,17 +98,17 @@ fn create_prev_links(logfile: &str, dir: &str) -> Result<()> {
     Ok(())
 }
 
-fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
-    let re = Regex::new(r"^[()\s]*(\S+)")?;
-    let cap = re.captures(cmd).ok_or(ErrorKind::NoMatch)?;
-    let arg0 = cap[1].parse::<String>()?;
-    let arg0 = Path::new(&arg0).file_name().ok_or(ErrorKind::NotFileName)?;
-    let arg0 = arg0.to_str().ok_or(ErrorKind::InvalidUnicode)?;
+fn setup_cmd_link(logfile: &str, cmd: &str) -> io::Result<()> {
+    let re = Regex::new(r"^[()\s]*(\S+)").unwrap();
+    let cap = re.captures(cmd).unwrap();
+    let arg0 = cap[1].parse::<String>().unwrap();
+    let arg0 = Path::new(&arg0).file_name().unwrap();
+    let arg0 = arg0.to_str().unwrap();
 
     let pp = Path::new(logfile)
         .parent()
-        .ok_or(ErrorKind::InvalidParent)?;
-    let pp = pp.to_str().ok_or(ErrorKind::InvalidUnicode)?;
+        .unwrap();
+    let pp = pp.to_str().unwrap();
 
     let cmddirs = [
         format!("{}/RAW/{}", TANLOG_DIR, arg0),
@@ -140,8 +120,8 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
             (&raw_to_san(cmddir), &raw_to_san(logfile)),
         ] {
             fs::create_dir_all(cd)?;
-            let p = Path::new(lf).file_name().ok_or(ErrorKind::NotFileName)?;
-            let p = p.to_str().ok_or(ErrorKind::InvalidUnicode)?;
+            let p = Path::new(lf).file_name().unwrap();
+            let p = p.to_str().unwrap();
             ln_sf(lf, &format!("{}/{}", cd, p));
             create_prev_links(lf, cd)?;
         }
@@ -149,7 +129,7 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> Result<()> {
     Ok(())
 }
 
-fn start_tanlog(cmd: &str) -> Result<()> {
+fn start_tanlog(cmd: &str) -> io::Result<()> {
     let now = Local::now();
     let logdir = format!("{}/RAW/{}", TANLOG_DIR, now.format("%Y-%m-%d"));
 
@@ -176,7 +156,7 @@ fn start_tanlog(cmd: &str) -> Result<()> {
 
     tmux_log_on!(logfile);
 
-    write!(io::stdout(), "{}", logfile)?;
+    write!(io::stdout(), "{}", logfile).unwrap();
 
     create_prev_links(&raw_to_san(&logfile), &format!("{}/TODAY", TANLOG_DIR))?;
 
@@ -185,7 +165,7 @@ fn start_tanlog(cmd: &str) -> Result<()> {
     Ok(())
 }
 
-fn sanitize_log(rawfile: &str) -> Result<()> {
+fn sanitize_log(rawfile: &str) -> io::Result<()> {
     let sanfile = raw_to_san(rawfile);
     if Path::new(&sanfile).exists() {
         process::exit(0)
@@ -210,7 +190,7 @@ fn sanitize_log(rawfile: &str) -> Result<()> {
     Ok(())
 }
 
-fn end_tanlog(fname: &str) -> Result<()> {
+fn end_tanlog(fname: &str) -> io::Result<()> {
     tmux_log_off!();
     if !Path::new(fname).exists() {
         process::exit(0)
@@ -223,24 +203,24 @@ fn end_tanlog(fname: &str) -> Result<()> {
     Ok(())
 }
 
-fn show_recent_logs() -> Result<()> {
+fn show_recent_logs() -> io::Result<()> {
     let mut log = format!("{}/TODAY/PPPPPPPPPP", TANLOG_DIR); // "P" * 10
     for _ in 0..10 {
         if Path::new(&log).exists() {
             let ifile = File::open(&log)?;
             let mut br = BufReader::new(ifile);
             let mut line = String::new();
-            while br.read_line(&mut line)? > 0 {
-                write!(io::stdout(), "{}", line)?;
+            while br.read_line(&mut line).unwrap() > 0 {
+                write!(io::stdout(), "{}", line).unwrap();
                 line.clear();
             }
         }
-        log.pop().ok_or(ErrorKind::NoChars)?;
+        log.pop();
     }
     Ok(())
 }
 
-fn main() -> Result<()> {
+fn main() -> io::Result<()> {
     let args = env::args().skip(1).collect::<Vec<_>>();
     if args.is_empty() {
         errorln!("No args.")
@@ -266,6 +246,9 @@ fn main() -> Result<()> {
             println!("{}", env!("CARGO_PKG_VERSION"));
             process::exit(0)
         }
-        _ => Err(Error::from(ErrorKind::NoCommand)),
+        s => {
+            eprintln!("Unknown option: {}", s);
+            process::exit(1)
+        }
     }
 }
