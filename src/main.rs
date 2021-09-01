@@ -144,7 +144,7 @@ fn start_tanlog(cmd: &str) -> io::Result<()> {
     for n in 0.. {
         let lf = format!("{}/{}-{}.log", logdir, time, n);
         if !Path::new(&lf).exists() {
-            logfile = lf.clone();
+            logfile = lf;
             break;
         }
     }
@@ -154,7 +154,7 @@ fn start_tanlog(cmd: &str) -> io::Result<()> {
 
     tmux_log_on!(logfile);
 
-    write!(io::stdout(), "{}", logfile).unwrap();
+    print!("{}", logfile);
 
     create_prev_links(&raw_to_san(&logfile), &format!("{}/TODAY", TANLOG_DIR))?;
 
@@ -209,7 +209,7 @@ fn show_recent_logs() -> io::Result<()> {
             let mut br = BufReader::new(ifile);
             let mut line = String::new();
             while br.read_line(&mut line).unwrap() > 0 {
-                write!(io::stdout(), "{}", line).unwrap();
+                print!("{}", line);
                 line.clear();
             }
         }
