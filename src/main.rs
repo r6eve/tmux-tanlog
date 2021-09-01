@@ -7,12 +7,8 @@
 
 #![allow(unused_doc_comments)]
 
-extern crate chrono;
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
-
 use chrono::Local;
+use lazy_static::lazy_static;
 use regex::{bytes, Regex};
 use std::env;
 use std::fs::{self, File};
