@@ -105,9 +105,7 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> io::Result<()> {
     let arg0 = Path::new(&arg0).file_name().unwrap();
     let arg0 = arg0.to_str().unwrap();
 
-    let pp = Path::new(logfile)
-        .parent()
-        .unwrap();
+    let pp = Path::new(logfile).parent().unwrap();
     let pp = pp.to_str().unwrap();
 
     let cmddirs = [
