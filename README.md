@@ -2,9 +2,11 @@ tmux-tanlog
 ===========
 [![Build Status][]][CI Results]
 
-`tmux-tanlog` is a tmux/zsh version of [tanlog][] (It's original GNU Screen version).
+`tmux-tanlog` is a tmux/zsh version of [tanlog][] (It's original GNU Screen
+version).
 
-This tool saves console outputs into text files in `/tmp/tanlog/`. It depends on `tmux` and `zsh`.
+This tool saves console outputs into text files in `/tmp/tanlog/`. It depends
+on `tmux` and `zsh`.
 
 ## Installation
 
@@ -18,7 +20,8 @@ $ cargo install --path .
 
 ### From executable binaries
 
-See [Releases][]. There are two binaries; `*-gnu.tar.xz` is dynamically linked and `*-musl.tar.xz` is statically linked.
+See [Releases][]. There are two binaries; `*-gnu.tar.xz` is dynamically linked
+and `*-musl.tar.xz` is statically linked.
 
 ## Settings
 
