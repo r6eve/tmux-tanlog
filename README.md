@@ -33,6 +33,9 @@ preexec_functions+=tanlog_begin
 precmd_functions+=tanlog_end
 ```
 
+Output directory defaults to `/tmp/tanlog`. Set the environment variable
+`TANLOG_DIR` if you want to change it.
+
 [Build Status]: https://travis-ci.org/r6eve/tmux-tanlog.svg?branch=master
 [CI Results]: https://travis-ci.org/r6eve/tmux-tanlog
 [tanlog]: http://shinh.hatenablog.com/entry/2017/02/12/031105

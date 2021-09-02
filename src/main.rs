@@ -18,9 +18,14 @@ use std::os::unix;
 use std::path::Path;
 use std::process::{self, Command};
 
-const TANLOG_DIR: &str = "/tmp/tanlog";
-
 lazy_static! {
+    static ref TANLOG_DIR: String = {
+        match env::var_os("TANLOG_DIR") {
+            Some(v) => v.into_string().unwrap(),
+            None => String::from("/tmp/tanlog"),
+        }
+    };
+
     static ref REMOVE: bytes::Regex = bytes::Regex::new(r"(?x)
         \a # Bell
         | \x1B \x5B .*? [\x40-\x7E] # CSI
@@ -105,7 +110,7 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> io::Result<()> {
     let pp = pp.to_str().unwrap();
 
     let cmddirs = [
-        format!("{}/RAW/{}", TANLOG_DIR, arg0),
+        format!("{}/RAW/{}", *TANLOG_DIR, arg0),
         format!("{}/{}", pp, arg0),
     ];
     for cmddir in &cmddirs {
@@ -125,14 +130,14 @@ fn setup_cmd_link(logfile: &str, cmd: &str) -> io::Result<()> {
 
 fn start_tanlog(cmd: &str) -> io::Result<()> {
     let now = Local::now();
-    let logdir = format!("{}/RAW/{}", TANLOG_DIR, now.format("%Y-%m-%d"));
+    let logdir = format!("{}/RAW/{}", *TANLOG_DIR, now.format("%Y-%m-%d"));
 
     for &(path, ld) in &[("RAW/", &logdir), ("", &raw_to_san(&logdir))] {
         fs::create_dir_all(ld)?;
-        let dot_today = format!("{}/{}.TODAY", TANLOG_DIR, path);
+        let dot_today = format!("{}/{}.TODAY", *TANLOG_DIR, path);
         rm_f(&dot_today);
         ln_sf(ld, &dot_today);
-        fs::rename(&dot_today, &format!("{}/{}TODAY", TANLOG_DIR, path))?;
+        fs::rename(&dot_today, &format!("{}/{}TODAY", *TANLOG_DIR, path))?;
     }
 
     let mut logfile = String::new();
@@ -152,7 +157,7 @@ fn start_tanlog(cmd: &str) -> io::Result<()> {
 
     print!("{}", logfile);
 
-    create_prev_links(&raw_to_san(&logfile), &format!("{}/TODAY", TANLOG_DIR))?;
+    create_prev_links(&raw_to_san(&logfile), &format!("{}/TODAY", *TANLOG_DIR))?;
 
     setup_cmd_link(&logfile, cmd)?;
 
@@ -198,7 +203,7 @@ fn end_tanlog(fname: &str) -> io::Result<()> {
 }
 
 fn show_recent_logs() -> io::Result<()> {
-    let mut log = format!("{}/TODAY/PPPPPPPPPP", TANLOG_DIR); // "P" * 10
+    let mut log = format!("{}/TODAY/PPPPPPPPPP", *TANLOG_DIR); // "P" * 10
     for _ in 0..10 {
         if Path::new(&log).exists() {
             let ifile = File::open(&log)?;
