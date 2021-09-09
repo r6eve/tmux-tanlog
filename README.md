@@ -23,6 +23,12 @@ $ cargo install --path .
 See [Releases][]. `tmux-tanlog-x86_64-unknown-linux-musl` is statically linked
 binary.
 
+#### Arch Linux
+
+```console
+yay -S tmux-tanlog-bin
+```
+
 ## Settings
 
 And add the following to your .zshrc
