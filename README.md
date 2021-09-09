@@ -39,7 +39,7 @@ precmd_functions+=tanlog_end
 Output directory defaults to `/tmp/tanlog`. Set the environment variable
 `TANLOG_DIR` if you want to change it.
 
-[Build Status]: https://travis-ci.org/r6eve/tmux-tanlog.svg?branch=master
-[CI Results]: https://travis-ci.org/r6eve/tmux-tanlog
+[Build Status]: https://github.com/r6eve/tmux-tanlog/workflows/main/badge.svg
+[CI Results]: https://github.com/r6eve/tmux-tanlog/actions
 [tanlog]: http://shinh.hatenablog.com/entry/2017/02/12/031105
 [Releases]: https://github.com/r6eve/tmux-tanlog/releases
