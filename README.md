@@ -20,8 +20,8 @@ $ cargo install --path .
 
 ### From executable binaries
 
-See [Releases][]. There are two binaries; `*-gnu.tar.xz` is dynamically linked
-and `*-musl.tar.xz` is statically linked.
+See [Releases][]. `tmux-tanlog-x86_64-unknown-linux-musl` is statically linked
+binary.
 
 ## Settings
 
