@@ -20,8 +20,8 @@ $ cargo install --path .
 
 ### From executable binaries
 
-See [Releases][]. `tmux-tanlog-x86_64-unknown-linux-musl` is statically linked
-binary.
+See [Releases][]. `tmux-tanlog-${version}-x86_64-unknown-linux-musl` is
+statically linked binary.
 
 #### Arch Linux
 
