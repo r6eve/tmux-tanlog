@@ -1,6 +1,6 @@
 [package]
 name = "tmux-tanlog"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["r6eve <r6eve@acm.org>"]
 edition = "2018"
 
