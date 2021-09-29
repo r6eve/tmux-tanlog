@@ -9,24 +9,34 @@ jobs:
   release:
     name: Publish binaries
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - x86_64-unknown-linux-musl
     steps:
       - uses: actions/checkout@v2
       - name: Install latest stable
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: x86_64-unknown-linux-musl
+          target: ${{ matrix.arch }}
           override: true
       - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --target x86_64-unknown-linux-musl --locked
+          args: --release --target ${{ matrix.arch }} --locked
+      - name: Package
+        run: |
+          version=$(basename ${{ github.ref }})
+          pkg=tmux-tanlog-${version}-${{ matrix.arch }}
+          mkdir pack
+          cp target/${{ matrix.arch }}/release/tmux-tanlog pack/${pkg}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/x86_64-unknown-linux-musl/release/tmux-tanlog
-          asset_name: tmux-tanlog-x86_64-unknown-linux-musl
+          file: pack/*
           tag: ${{ github.ref }}
           overwrite: true
+          file_glob: true
